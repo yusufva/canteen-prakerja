@@ -10,6 +10,7 @@ import (
 )
 
 type UserService interface {
+	CreateNewUser(payload dto.NewUserRequest) (*dto.NewUserResponse, custerrs.MessageErr)
 	Login(loginPayload dto.LoginRequest) (*dto.LoginResponse, custerrs.MessageErr)
 }
 
@@ -21,6 +22,39 @@ func NewUserService(userRepo user_repository.UserRepository) UserService {
 	return &userService{
 		userRepo: userRepo,
 	}
+}
+
+func (us *userService) CreateNewUser(payload dto.NewUserRequest) (*dto.NewUserResponse, custerrs.MessageErr) {
+	err := helpers.ValidateStruct(payload)
+
+	if err != nil {
+		return nil, err
+	}
+
+	userEntity := entity.User{
+		Username: payload.Username,
+		Password: payload.Password,
+	}
+
+	err = userEntity.HashPassword()
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = us.userRepo.CreateNewUser(userEntity)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response := dto.NewUserResponse{
+		Result:     "success",
+		Message:    "user registered successfully",
+		StatusCode: http.StatusCreated,
+	}
+
+	return &response, nil
 }
 
 func (us *userService) Login(loginPayload dto.LoginRequest) (*dto.LoginResponse, custerrs.MessageErr) {
