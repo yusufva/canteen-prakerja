@@ -6,7 +6,7 @@ import (
 )
 
 type UserRepository interface {
-	CreateNewUser(userPayload *entity.User) custerrs.MessageErr
+	CreateNewUser(userPayload entity.User) custerrs.MessageErr
 	GetUserById(userId int) (*entity.User, custerrs.MessageErr)
 	GetUserByUsername(username string) (*entity.User, custerrs.MessageErr)
 }

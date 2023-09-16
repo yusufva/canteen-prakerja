@@ -18,7 +18,7 @@ func NewUserMy(db *gorm.DB) user_repository.UserRepository {
 	}
 }
 
-func (u *userMY) CreateNewUser(userPayload *entity.User) custerrs.MessageErr {
+func (u *userMY) CreateNewUser(userPayload entity.User) custerrs.MessageErr {
 	result := u.db.Create(&userPayload)
 
 	if result.Error != nil {
